@@ -1,6 +1,7 @@
 # Mareu 
 
 Introduction
+
 Mareu est un projet  du parcours Développeur d'applications mobiles Android d'OpenClassroom.
 C'est une  application de gestion de salles de réunion pour les collaborateurs de la société Lamzone.
 
