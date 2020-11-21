@@ -12,6 +12,7 @@ public interface MeetingApiService {
 
     List<Meeting> filtreByLieuAndDate(String salle, Date date);
 
+
     void addMeeting(Meeting meeting);
 
     void delMeeting(Meeting meeting);

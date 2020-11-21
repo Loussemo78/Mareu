@@ -1,9 +1,5 @@
 package com.example.mareu.ui;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,15 +11,15 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListPopupWindow;
-import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.example.mareu.R;
 import com.example.mareu.di.DI;
 import com.example.mareu.events.FilterRoomAndDateEvent;
-import com.example.mareu.events.ResetRoomAndDateEvent;
 import com.example.mareu.model.Meeting;
 import com.example.mareu.repositories.MeetingRepository;
-import com.example.mareu.service.MeetingApiService;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
 import org.greenrobot.eventbus.EventBus;
@@ -31,7 +27,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import static com.example.mareu.R.id.room_filter;
@@ -39,7 +34,7 @@ import static com.example.mareu.R.id.room_filter;
 public class BottomSheetLieuAndDate extends BottomSheetDialogFragment {
 
     private List<Meeting> mMeetings;
-   // private RecyclerView mRecyclerView;
+    // private RecyclerView mRecyclerView;
     private Calendar calendar = Calendar.getInstance();
     private List<Meeting> meetings;
     private EditText editTextFiltreRoom;
@@ -56,8 +51,6 @@ public class BottomSheetLieuAndDate extends BottomSheetDialogFragment {
     }
 
 
-
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.filter_room, container, false);
@@ -68,7 +61,7 @@ public class BottomSheetLieuAndDate extends BottomSheetDialogFragment {
         room.add("Peach");
 
         roomFilterList = new ListPopupWindow(getContext());
-        ArrayAdapter adapter = new ArrayAdapter(getContext(), R.layout.item_room, room_filter,room);
+        ArrayAdapter adapter = new ArrayAdapter(getContext(), R.layout.item_room, room_filter, room);
         roomFilterList.setAnchorView(editTextFiltreRoom);
         roomFilterList.setAdapter(adapter);
         editTextFiltreRoom.setOnClickListener(new View.OnClickListener() {
@@ -87,26 +80,23 @@ public class BottomSheetLieuAndDate extends BottomSheetDialogFragment {
         editTextFiltreDate = (EditText) v.findViewById(R.id.editTextFiltreDate);
         editTextFiltreDate.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
-                showDateBottomDialog(editTextFiltreDate);
+            public void onClick(View view) { showDateBottomDialog(editTextFiltreDate);
             }
         });
 
         buttonFiltrer = (Button) v.findViewById(R.id.buttonFiltrer);
         buttonFiltrer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v ) {
-              EventBus.getDefault().post(new FilterRoomAndDateEvent(editTextFiltreRoom.getText().toString(),
-                      calendar.getTime()));
-
-              dismiss();
+            public void onClick(View v) {
+                EventBus.getDefault().post(new FilterRoomAndDateEvent(editTextFiltreRoom.getText().toString()
+                        , editTextFiltreDate.getText().toString().equals("")? null:calendar.getTime()));
+                dismiss();
             }
         });
 
+
         return v;
     }
-
 
 
     private void showDateBottomDialog(EditText editTextFiltreDate) {
@@ -122,8 +112,9 @@ public class BottomSheetLieuAndDate extends BottomSheetDialogFragment {
                 editTextFiltreDate.setText(dateShowing);
 
 
+            }
 
-            };
+            ;
 
         };
         new DatePickerDialog(getContext(), dateSetListener, calendar.get(Calendar.YEAR),

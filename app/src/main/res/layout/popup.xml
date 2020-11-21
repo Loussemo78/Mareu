@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
     android:id="@+id/popupLayout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
@@ -58,17 +63,6 @@
         android:hint="Participant"
         android:textSize="16sp" />
 
-    <!--<com.hootsuite.nachos.NachoTextView
-        android:id="@+id/nachoParticipants"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:hint="Participants"
-        android:inputType="textEmailAddress"
-        android:singleLine="false"
-        android:textSize="16sp"
-        tools:ignore="MissingClass" /> -->
 
     <EditText
         android:id="@+id/editTextDate"
@@ -113,3 +107,4 @@
         android:textColor="@android:color/white"
         android:textSize="24sp" />
 </LinearLayout>
+</ScrollView>

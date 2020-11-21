@@ -33,7 +33,6 @@ import com.example.mareu.model.Meeting;
 import com.example.mareu.repositories.MeetingRepository;
 import com.example.mareu.service.MeetingApiService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.hootsuite.nachos.NachoTextView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -59,8 +58,6 @@ public class ListMeetingActivity extends BaseActivity {
     private EditText editTextSujet;
     private EditText editTextHeure;
     private EditText editTextDate;
-    private DatePickerDialog datePicker;
-    private TimePickerDialog timePicker;
     private EditText editTextParticipants;
     private Button ajouter;
     private List<Meeting> mMeetings;
@@ -81,8 +78,6 @@ public class ListMeetingActivity extends BaseActivity {
         mMeetingRepository = DI.createMeetingRepository();
         mMeetings = mMeetingRepository.getMeetings();
         configureRecyclerView();
-        datePicker = new DatePickerDialog(this);
-        //timePicker = new TimePickerDialog(this);
         mDialog = new Dialog(this);
         mDialog.setContentView(R.layout.popup);
         mFab = findViewById(R.id.activity_list_meeting_fab);
@@ -90,7 +85,7 @@ public class ListMeetingActivity extends BaseActivity {
             @Override
             public void onClick(View view) {
                 showPopup();
-
+                submit();
             }
         });
     }
@@ -156,10 +151,14 @@ public class ListMeetingActivity extends BaseActivity {
     }
 
     @Subscribe
-    public void onFilterRoom(FilterRoomAndDateEvent event) {
+    public void onFilterRoomAndDate(FilterRoomAndDateEvent event) {
         mMeetings = mMeetingRepository.filtreByLieuAndDate(event.room, event.date);
         configureRecyclerView();
     }
+
+
+
+
 
     @Subscribe
     public void onResetList(ResetRoomAndDateEvent event) {
@@ -180,26 +179,34 @@ public class ListMeetingActivity extends BaseActivity {
                 String txtLieu = editTextLieu.getText().toString();
                 String txtSujet = editTextSujet.getText().toString();
                 String txtParticipant = editTextParticipants.getText().toString();
+                String txtDate = editTextDate.getText().toString();
+                String txtHeure = editTextHeure.getText().toString();
                 // instancier les meeting meeting = new Meeting()
-
-
+                if (txtLieu.equals("")) {
+                    editTextLieu.setError(getString(R.string.FillPlace),null);
+                    return;
+                }
                 if (txtSujet.equals("")) {
-                    Toast.makeText(ListMeetingActivity.this, R.string.FillSubject, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    editTextSujet.setText("");
+                    editTextSujet.setError(getString(R.string.FillSubject),null);
+                    return;
                 }
-
                 if (txtParticipant.equals("")) {
-                    Toast.makeText(ListMeetingActivity.this, R.string.FillPart, Toast.LENGTH_SHORT).show();
-
-                } else {
-                    editTextParticipants.setText("");
+                    editTextParticipants.setError(getString(R.string.FillPart),null);
+                    return;
+                }
+                if (txtDate.equals("")) {
+                    editTextDate.setError(getString(R.string.FillDate),null);
+                    return;
+                }
+                if (txtHeure.equals("")) {
+                    editTextHeure.setError(getString(R.string.FillHour),null);
+                    return;
                 }
 
-                Meeting meeting = new Meeting(txtSujet,calendar.getTime(), txtLieu, txtParticipant);
-                mMeetingRepository.addMeeting(meeting);
+                Meeting meetingAdded = new Meeting(txtSujet, calendar.getTime(), txtLieu, txtParticipant);
+                mMeetingRepository.addMeeting(meetingAdded);
                 Objects.requireNonNull(mRecyclerView.getAdapter()).notifyDataSetChanged();
+                submit();
                 mDialog.dismiss();
 
             }
@@ -208,42 +215,39 @@ public class ListMeetingActivity extends BaseActivity {
         mDialog.show();
     }
 
-    private void initEditText(){
+
+    private void submit() {
+        editTextParticipants.getText().clear();
+        editTextLieu.getText().clear();
+        editTextDate.getText().clear();
+        editTextHeure.getText().clear();
+        editTextSujet.getText().clear();
+    }
+
+    private void initEditText() {
         editTextHeure = mDialog.findViewById(R.id.editTextHeure);
         editTextDate = mDialog.findViewById(R.id.editTextDate);
         editTextLieu = mDialog.findViewById(R.id.editTextLieu);
         editTextSujet = mDialog.findViewById(R.id.editTextSujet);
         editTextParticipants = mDialog.findViewById(R.id.editTextParticipant);
-
-        /*nachoParticipants.addChipTerminator(' ', 3);
-        nachoParticipants.enableEditChipOnTouch(false, true);*/
-
         editTextHeure.setInputType(InputType.TYPE_NULL);
         editTextDate.setInputType(InputType.TYPE_NULL);
 
     }
 
     private void onClickEditText() {
-    editTextLieu.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            sallePopUpList.show();
-        }
-    });
+        editTextLieu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { sallePopUpList.show(); }});
 
-    editTextDate.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            showDateDialog(editTextDate);
-        }
-    });
-    editTextHeure.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            showTimeDialog(editTextHeure);
-        }
-    });
-}
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { showDateDialog(editTextDate); }});
+        editTextHeure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) { showTimeDialog(editTextHeure); }});
+    }
+
     private void setPopUpList() {
         List<String> salle = new ArrayList<>();
         salle.add("Luigi");
@@ -272,12 +276,12 @@ public class ListMeetingActivity extends BaseActivity {
                 String timeShowing = fmtOut.format(calendar.getTime());
                 editTextHeure.setText(timeShowing);
 
-
             }
 
         };
         new TimePickerDialog(ListMeetingActivity.this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE), false).show();
+
     }
 
     private void showDateDialog(EditText editTextDate) {
@@ -291,18 +295,9 @@ public class ListMeetingActivity extends BaseActivity {
                 SimpleDateFormat fmtOut = new SimpleDateFormat("dd-MM-yy");
                 String dateShowing = fmtOut.format(calendar.getTime());
                 editTextDate.setText(dateShowing);
-
-
             }
-
-            ;
-
         };
         new DatePickerDialog(ListMeetingActivity.this, dateSetListener, calendar.get(YEAR),
                 calendar.get(MONTH), calendar.get(DAY_OF_MONTH)).show();
-
-
     }
-
-
 }

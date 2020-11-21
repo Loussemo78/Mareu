@@ -33,7 +33,6 @@ public class BottomSheetReset extends BottomSheetDialogFragment {
         super.onCreate(savedInstanceState);
         meetingRepository = DI.createMeetingRepository();
         mMeetings = meetingRepository.getMeetings();
-        //setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme);
     }
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
